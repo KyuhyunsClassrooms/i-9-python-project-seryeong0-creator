@@ -32,13 +32,25 @@ def check_safety(zone, students):
 
     score = 100
 
-    # 거리 감점
-    if distance > 30:
-        score -= 30
+    # 거리 감점: 25m 초과 시 초과 1m마다 2점 감점
+    if distance > 25:
+        score -= (distance - 25) * 2
 
-    # 문 병목 감점
-    if doors > 0 and (students / doors) > 20:
-        score -= 20
+    # 문 병목 감점: 학생/문 > 10명일 때 초과 1명당 3점 감점
+    if doors > 0 and (students / doors) > 10:
+        score -= (students / doors - 10) * 3
+
+    # 복도 너비 감점
+    if width < 120:
+        score -= 10
+    elif width < 150:
+        score -= 5
+
+    # 점수 범위 제한
+    if score < 0:
+        score = 0
+    elif score > 100:
+        score = 100
 
     # 안전 등급
     if score >= 80:
@@ -48,7 +60,7 @@ def check_safety(zone, students):
     else:
         grade = "위험"
 
-    return score, grade
+    return round(score), grade
 
 
 def print_report(zone, students, score, grade):
